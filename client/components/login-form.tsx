@@ -6,7 +6,7 @@ import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Github, Loader2 } from "lucide-react";
+import {  Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -141,21 +141,7 @@ export function LoginForm() {
         </form>
       </Form>
 
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <Separator className="w-full" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-2">
-        <Button variant="outline" type="button" disabled={isLoading}>
-          <Github className="mr-2 h-4 w-4" />
-          GitHub
-        </Button>
-      </div>
+      
 
       <div className="text-center text-sm">
         Don&apos;t have an account?{" "}
