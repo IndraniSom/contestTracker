@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Github, Loader2 } from "lucide-react";
-
+import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -31,7 +31,7 @@ export function LoginForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const { fetchUser } = useAuth();
   const API_URL = process.env.NEXT_PUBLIC_API_URL; // Get backend URL from .env
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -46,7 +46,7 @@ export function LoginForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setError("");
-
+  
     try {
       const res = await fetch(`${API_URL}/users/login`, {
         method: "POST",
@@ -55,17 +55,20 @@ export function LoginForm() {
         },
         body: JSON.stringify(values),
       });
-
+  
       const data = await res.json();
-
+  
       if (!res.ok) {
         throw new Error(data.message || "Login failed");
       }
-
-      // Store token or session if needed
+  
+      // Store token
       localStorage.setItem("token", data.token);
-
-      // Redirect to home page after successful login
+  
+      // ✅ Fetch user again after login to update UI
+      await fetchUser();
+  
+      // Redirect to home page
       router.push("/");
     } catch (err: any) {
       setError(err.message);
@@ -73,6 +76,7 @@ export function LoginForm() {
       setIsLoading(false);
     }
   }
+  
 
   return (
     <div className="grid gap-6">

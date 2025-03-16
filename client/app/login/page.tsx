@@ -3,8 +3,8 @@ import Link from "next/link"
 import { LoginForm } from "@/components/login-form"
 
 export const metadata: Metadata = {
-  title: "Login - Contest Tracker",
-  description: "Login to your Contest Tracker account",
+  title: "Login - CodeTracker",
+  description: "Login to your CodeTracker account",
 }
 
 export default function LoginPage() {

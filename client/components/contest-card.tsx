@@ -6,6 +6,8 @@ import { Bookmark, ExternalLink, Clock } from "lucide-react"
 import type { Contest } from "@/lib/types"
 import { formatDistanceToNow, format } from "date-fns"
 
+const YOUTUBE_API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY
+
 interface ContestCardProps {
   contest: Contest
   isBookmarked: boolean
@@ -39,30 +41,54 @@ export function ContestCard({ contest, isBookmarked, onBookmarkToggle, isPast = 
   }, [contest.start, isPast])
 
   useEffect(() => {
-    const fetchSolutionLink = () => {
+    const fetchSolutionVideo = async () => {
       try {
-        // Set the appropriate playlist ID based on the contest platform
         let playlistId: string | null = null
 
         if (contest.platform === "leetcode.com") {
-          playlistId = 'PLcXpkI9A-RZI6FhydNz3JBt_-p_i25Cbr'; // Replace with your actual Leetcode playlist ID
+          playlistId = 'PLcXpkI9A-RZI6FhydNz3JBt_-p_i25Cbr' // Replace with actual Leetcode playlist ID
         } else if (contest.platform === "codeforces.com") {
-          playlistId = 'PLcXpkI9A-RZLUfBSNp-YQBCOezZKbDSgB'; // Replace with your actual Codeforces playlist ID
+          playlistId = 'PLcXpkI9A-RZLUfBSNp-YQBCOezZKbDSgB' // Replace with actual Codeforces playlist ID
         } else if (contest.platform === "codechef.com") {
-          playlistId = 'PLcXpkI9A-RZIZ6lsE0KCcLWeKNoG45fYr'; // Replace with your actual Codechef playlist ID
+          playlistId = 'PLcXpkI9A-RZIZ6lsE0KCcLWeKNoG45fYr' // Replace with actual Codechef playlist ID
         }
 
-        // If a valid playlistId is found, set the solution link
-        if (playlistId) {
-          setSolutionLink(`https://www.youtube.com/playlist?list=${playlistId}`)
+        if (!playlistId) return
+
+        const response = await fetch(
+          `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&key=${YOUTUBE_API_KEY}`
+        )
+        const data = await response.json()
+
+        if (!data.items) return
+
+        // Match contest event with video title
+        const matchedVideo = data.items.find((video: any) => {
+          const videoTitle = video.snippet.title.toLowerCase();
+          let contestTitle = contest.event.toLowerCase();
+        
+          // Adjust contest title format based on platform
+          if (contest.platform === "leetcode.com") {
+            contestTitle = `leetcode ${contestTitle}`;
+          } else if (contest.platform === "codeforces.com") {
+            contestTitle = `${contestTitle}`;
+          } else if (contest.platform === "codechef.com") {
+            contestTitle = `codechef ${contestTitle}`;
+          }
+        
+          return videoTitle.includes(contestTitle);
+        });
+        
+        if (matchedVideo) {
+          setSolutionLink(`https://www.youtube.com/watch?v=${matchedVideo.snippet.resourceId.videoId}`)
         }
       } catch (error) {
-        console.error("Failed to fetch YouTube playlist:", error)
+        console.error("Failed to fetch YouTube video:", error)
       }
     }
 
-    fetchSolutionLink()
-  }, [contest.platform]) // Re-run whenever contest.platform changes
+    fetchSolutionVideo()
+  }, [contest.event, contest.platform]) // Re-run whenever contest.event or contest.platform changes
 
   const getPlatformColor = (platform: string) => {
     switch (platform.toLowerCase()) {
@@ -78,7 +104,7 @@ export function ContestCard({ contest, isBookmarked, onBookmarkToggle, isPast = 
   }
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="w-full overflow-hidden">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <Badge className={`${getPlatformColor(contest.platform)}`}>{contest.platform}</Badge>

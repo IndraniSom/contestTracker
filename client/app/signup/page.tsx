@@ -3,8 +3,8 @@ import Link from "next/link"
 import { SignUpForm } from "@/components/signupform"
 
 export const metadata: Metadata = {
-  title: "Sign Up - Contest Tracker",
-  description: "Create a new Contest Tracker account",
+  title: "Sign Up - CodeTracker",
+  description: "Create a new CodeTracker account",
 }
 
 export default function SignUpPage() {

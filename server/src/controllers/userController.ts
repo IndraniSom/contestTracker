@@ -2,9 +2,11 @@ import { Request, Response, NextFunction, RequestHandler } from "express";
 import User from "../models/user";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret"; // Store securely in .env
-
+import dotenv from "dotenv";
+const JWT_SECRET = process.env.JWT_SECRET ||'asdfghjmikkhjasknsdh'; // Store securely in .env
+interface AuthRequest extends Request {
+  user?: { _id: string }; // Ensure `_id` is of type string
+}
 // Signup
 export const signup: RequestHandler = async (req, res, next): Promise<void> => {
   try {
@@ -37,7 +39,8 @@ export const signup: RequestHandler = async (req, res, next): Promise<void> => {
 
 // Login
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
-const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || ''; // Ensure this is a hashed password
+const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || ''; 
+
 
 export const login: RequestHandler = async (req, res, next): Promise<void> => {
   try {
@@ -52,8 +55,11 @@ export const login: RequestHandler = async (req, res, next): Promise<void> => {
       }
 
       // If admin credentials match, send admin token and data
+      if (!JWT_SECRET) {
+        throw new Error("JWT_SECRET is not defined");
+      }
       const token = jwt.sign({ userId: ADMIN_EMAIL }, JWT_SECRET, { expiresIn: '7d' });
-
+      console.log("🔹 Signing Token with Secret:", process.env.JWT_SECRET);
       res.json({
         token,
         user: { id: ADMIN_EMAIL, email: ADMIN_EMAIL, role: 'admin' }, // Send admin details
@@ -74,6 +80,9 @@ export const login: RequestHandler = async (req, res, next): Promise<void> => {
       return; // End the request cycle after sending the response
     }
 
+    if (!JWT_SECRET) {
+      throw new Error("JWT_SECRET is not defined");
+    }
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
 
     res.json({
@@ -152,5 +161,28 @@ export const removeBookmark = async (
     return; // Explicitly return to satisfy TypeScript
   } catch (error) {
     next(error);
+  }
+};
+
+
+export const getUserProfile = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    if (!req.user || !req.user._id) {
+      res.status(401).json({ message: "Not authorized, no user found" });
+      return;
+    }
+
+    const user = await User.findById(req.user._id).select("-password"); // Exclude password
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    res.status(200).json(user);
+    console.log("User profile sent:", user);
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };

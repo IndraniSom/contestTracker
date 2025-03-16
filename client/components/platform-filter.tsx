@@ -43,12 +43,23 @@ export function PlatformFilter({ selectedPlatforms, contests = [], onChange }: P
   }, [contests])
 
   const togglePlatform = (platform: string) => {
-    onChange(
-      selectedPlatforms.includes(platform)
-        ? selectedPlatforms.filter((p) => p !== platform)
-        : [...selectedPlatforms, platform]
-    )
-  }
+    if (selectedPlatforms.includes(platform)) {
+      // Prevent deselecting the last platform
+      if (selectedPlatforms.length === 1) return;
+      
+      onChange(selectedPlatforms.filter((p) => p !== platform));
+    } else {
+      onChange([...selectedPlatforms, platform]);
+    }
+  };
+  
+  // Ensure at least one platform is pre-selected when contests are available
+  useEffect(() => {
+    if (platforms.length > 0 && selectedPlatforms.length === 0) {
+      onChange([platforms[0].value]); // Select the first platform by default
+    }
+  }, [platforms, selectedPlatforms, onChange]);
+  
 
   return (
     <div className="flex items-center space-x-4">
