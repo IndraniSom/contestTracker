@@ -12,7 +12,7 @@ const app: Application = express();
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:3000", // Allow frontend URL
+    origin: process.env.CLIENT_URL || "http://localhost:3000" || "https://contest-tracker-2r35.vercel.app", // Allow frontend URL
     credentials: true, // Allow cookies, tokens, etc.
     methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
   })
