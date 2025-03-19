@@ -41,6 +41,14 @@ export function ContestCard({ contest, isBookmarked, onBookmarkToggle, isPast = 
   }, [contest.start, isPast])
 
   useEffect(() => {
+    const normalizeTitle = (title: string) => {
+  return title
+    .toLowerCase()
+    .replace(/\(div\.\s*(\d+)\)/gi, "(div $1)") // Convert "(Div. 3)" → "(Div 3)"
+    .replace(/\(.*?\)/g, "") // Remove everything inside parentheses (for CodeChef)
+    .replace(/\s+/g, " ") // Replace multiple spaces with a single space
+    .trim(); // Remove leading and trailing spaces
+};
     const fetchSolutionVideo = async () => {
       try {
         let playlistId: string | null = null
@@ -64,20 +72,23 @@ export function ContestCard({ contest, isBookmarked, onBookmarkToggle, isPast = 
 
         // Match contest event with video title
         const matchedVideo = data.items.find((video: any) => {
-          const videoTitle = video.snippet.title.toLowerCase();
+          let videoTitle = video.snippet.title.toLowerCase();
           let contestTitle = contest.event.toLowerCase();
         
           // Adjust contest title format based on platform
           if (contest.platform === "leetcode.com") {
             contestTitle = `leetcode ${contestTitle}`;
           } else if (contest.platform === "codeforces.com") {
-            contestTitle = `${contestTitle}`;
+            videoTitle=normalizeTitle(videoTitle);
+            contestTitle=normalizeTitle(contestTitle);
           } else if (contest.platform === "codechef.com") {
+            contestTitle = contestTitle.replace(/\(.*?\)/g, "").trim();
             contestTitle = `codechef ${contestTitle}`;
           }
         
           return videoTitle.includes(contestTitle);
         });
+        
         
         if (matchedVideo) {
           setSolutionLink(`https://www.youtube.com/watch?v=${matchedVideo.snippet.resourceId.videoId}`)
@@ -138,14 +149,15 @@ export function ContestCard({ contest, isBookmarked, onBookmarkToggle, isPast = 
             {isPast ? "View Results" : "Visit Contest"}
           </a>
         </Button>
-        {solutionLink && (
-          <Button variant="outline" size="sm" className="w-full mt-2" asChild>
-            <a href={solutionLink} target="_blank" rel="noopener noreferrer">
-              <ExternalLink className="mr-2 h-4 w-4" />
-              View Solution
-            </a>
-          </Button>
-        )}
+        {isPast && solutionLink && (
+  <Button variant="outline" size="sm" className="w-full mt-2" asChild>
+    <a href={solutionLink} target="_blank" rel="noopener noreferrer">
+      <ExternalLink className="mr-2 h-4 w-4" />
+      View Solution
+    </a>
+  </Button>
+)}
+
       </CardFooter>
     </Card>
   )

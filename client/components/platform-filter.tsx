@@ -52,7 +52,7 @@ export function PlatformFilter({ selectedPlatforms, contests = [], onChange }: P
 
   useEffect(() => {
     if (platforms.length > 0 && selectedPlatforms.length === 0) {
-      onChange([platforms[0].value]);
+      onChange([platforms[2].value]);
     }
   }, [platforms, selectedPlatforms, onChange])
 
@@ -85,7 +85,7 @@ export function PlatformFilter({ selectedPlatforms, contests = [], onChange }: P
                 <div
                   key={platform.value}
                   onClick={() => togglePlatform(platform.value)}
-                  className="flex items-center px-2 py-2 cursor-pointer hover:bg-gray-100 rounded-md"
+                  className="flex items-center px-2 py-2 cursor-pointer rounded-md"
                 >
                   <div
                     className={cn(
