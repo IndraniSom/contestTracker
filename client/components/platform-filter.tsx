@@ -3,7 +3,6 @@
 import { CheckIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useState, useEffect } from "react"
 
@@ -13,7 +12,7 @@ interface Contest {
   start: string
   end: string
   duration: number
-  platform: string // Updated: using platform instead of resource
+  platform: string
   url: string
   icon?: string
 }
@@ -27,12 +26,12 @@ interface PlatformFilterProps {
 export function PlatformFilter({ selectedPlatforms, contests = [], onChange }: PlatformFilterProps) {
   const [open, setOpen] = useState(false)
   const [platforms, setPlatforms] = useState<{ value: string; label: string }[]>([])
+  const [search, setSearch] = useState("")
 
-  // Extract unique platforms from the API response
   useEffect(() => {
     if (!contests?.length) return
 
-    const uniquePlatforms = Array.from(new Set(contests.map((contest) => contest.platform))) // Use contest.platform
+    const uniquePlatforms = Array.from(new Set(contests.map((contest) => contest.platform)))
       .map((platform) => ({
         value: platform.toLowerCase(),
         label: platform.charAt(0).toUpperCase() + platform.slice(1),
@@ -44,22 +43,22 @@ export function PlatformFilter({ selectedPlatforms, contests = [], onChange }: P
 
   const togglePlatform = (platform: string) => {
     if (selectedPlatforms.includes(platform)) {
-      // Prevent deselecting the last platform
       if (selectedPlatforms.length === 1) return;
-      
       onChange(selectedPlatforms.filter((p) => p !== platform));
     } else {
       onChange([...selectedPlatforms, platform]);
     }
-  };
-  
-  // Ensure at least one platform is pre-selected when contests are available
+  }
+
   useEffect(() => {
     if (platforms.length > 0 && selectedPlatforms.length === 0) {
-      onChange([platforms[0].value]); // Select the first platform by default
+      onChange([platforms[0].value]);
     }
-  }, [platforms, selectedPlatforms, onChange]);
-  
+  }, [platforms, selectedPlatforms, onChange])
+
+  const filteredPlatforms = platforms.filter((platform) =>
+    platform.label.toLowerCase().includes(search.toLowerCase())
+  )
 
   return (
     <div className="flex items-center space-x-4">
@@ -72,34 +71,39 @@ export function PlatformFilter({ selectedPlatforms, contests = [], onChange }: P
               : "Select platforms"}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="p-0" align="start">
-          <Command>
-            <CommandInput placeholder="Search platforms..." />
-            <CommandList>
-              <CommandEmpty>No platforms found.</CommandEmpty>
-              <CommandGroup>
-                {platforms.map((platform) => (
-                  <CommandItem
-                    key={platform.value}
-                    onSelect={() => togglePlatform(platform.value)}
-                    className="flex items-center"
+        <PopoverContent className="p-2 w-64">
+          <input
+            type="text"
+            placeholder="Search platforms..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-primary"
+          />
+          <div className="mt-2 max-h-60 overflow-y-auto">
+            {filteredPlatforms.length > 0 ? (
+              filteredPlatforms.map((platform) => (
+                <div
+                  key={platform.value}
+                  onClick={() => togglePlatform(platform.value)}
+                  className="flex items-center px-2 py-2 cursor-pointer hover:bg-gray-100 rounded-md"
+                >
+                  <div
+                    className={cn(
+                      "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                      selectedPlatforms.includes(platform.value)
+                        ? "bg-primary text-primary-foreground"
+                        : "opacity-50"
+                    )}
                   >
-                    <div
-                      className={cn(
-                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                        selectedPlatforms.includes(platform.value)
-                          ? "bg-primary text-primary-foreground"
-                          : "opacity-50 [&_svg]:invisible"
-                      )}
-                    >
-                      <CheckIcon className="h-3 w-3" />
-                    </div>
-                    <span>{platform.label}</span>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
+                    {selectedPlatforms.includes(platform.value) && <CheckIcon className="h-3 w-3" />}
+                  </div>
+                  <span>{platform.label}</span>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-gray-500 p-2">No platforms found.</p>
+            )}
+          </div>
         </PopoverContent>
       </Popover>
     </div>

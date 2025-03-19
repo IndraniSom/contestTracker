@@ -1,6 +1,5 @@
 import ContestList from "@/components/contest-list"
 import type { Metadata } from "next"
-import Allcontest from "@/components/allcontest"
 export const metadata: Metadata = {
   title: "CodeTracker - Track Coding Competitions",
   description: "Track upcoming and past coding contests from Codeforces, CodeChef, and LeetCode",
@@ -16,7 +15,6 @@ export default function Home() {
         </p>
       </div>
       <ContestList />
-      {/* <Allcontest/> */}
     </main>
   )
 }

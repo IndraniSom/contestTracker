@@ -43,9 +43,9 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ success: false, message: err.message });
 });
 
-// ✅ Start Server
+
 const PORT: number = Number(process.env.PORT) || 5000;
 app.listen(PORT, async () => {
-  await connectDB(); // Connect to MongoDB before running the server
+  await connectDB(); 
   console.log(` Server running on port ${PORT}`);
 });

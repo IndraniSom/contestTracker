@@ -1,7 +1,9 @@
-/** @type {import('next').NextConfig} */
+import { NextConfig } from 'next'
 const nextConfig = {
   experimental: {
-    serverActions: true, // Ensure this is enabled for Clerk v4+
+    serverActions: true, 
+    middleware: true,
+    
   },
   images: {
     remotePatterns: [

@@ -71,7 +71,7 @@ contest-tracker/
 │   │   ├── routes/             # API routes
 │   │   └── utils/              # Utility functions
 │   ├── package.json
-│   └── .env.example
+│   └── .env
 │
 └── README.md
 ```
@@ -95,10 +95,13 @@ contest-tracker/
       ```
 
    3. Frontend (client/.env)
-    - `NEXT_PUBLIC_CLIST_API_KEY`: API key for Clist.by to fetch contest information
-    - `NEXT_PUBLIC_CLIST_USERNAME`: Your github username
-    - `NEXT_PUBLIC_YOUTUBE_API_KEY`: YouTube API key for video content (if applicable)
-    - `NEXT_PUBLIC_API_URL`: URL for your backend server
+    - `NEXT_PUBLIC_CLIST_API_KEY`= API key for Clist.by to fetch contest information
+
+    - `NEXT_PUBLIC_CLIST_USERNAME`= Your github username
+
+    - `NEXT_PUBLIC_YOUTUBE_API_KEY`= YouTube API key for video content (if applicable)
+    
+    - `NEXT_PUBLIC_API_URL`= URL for your backend server
 
 4. Start the development server
    ```
@@ -117,11 +120,10 @@ contest-tracker/
    ```
 
 3. Backend (server/.env)
-    - `MONGO_URI`: MongoDB connection string (use MongoDB Atlas for production)
-    - `PORT`: Port number for the server to run on
+    - `MONGO_URI`= MongoDB connection string (use MongoDB Atlas for production)
+    - `PORT`= Port number for the server to run on
     - `JWT_SECRET`: Secret key for JWT token generation and verification
-    - `ADMIN_EMAIL`: Email for admin account
-    - `ADMIN_PASSWORD`: Password for admin account
+    
 
 4. Start the server
    ```

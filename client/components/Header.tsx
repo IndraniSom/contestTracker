@@ -76,7 +76,6 @@ export default function Header() {
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">{user.email}</p>
-                     
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
@@ -131,30 +130,30 @@ export default function Header() {
           <SimpleThemeToggle />
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[250px] sm:w-[300px]">
+            <SheetContent side="right" className="w-[280px] sm:w-[320px] p-0">
               <div className="flex flex-col h-full">
-                <div className="flex items-center justify-between py-4">
+                <div className="flex items-center justify-between p-4 border-b">
                   <div className="flex items-center gap-2">
-                    <Trophy className="h-5 w-5" />
-                    <span className="font-bold">CodeTracker</span>
+                    <Trophy className="h-5 w-5 text-primary" />
+                    <span className="font-bold text-lg">CodeTracker</span>
                   </div>
                   <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
                       <X className="h-5 w-5" />
                       <span className="sr-only">Close menu</span>
                     </Button>
                   </SheetTrigger>
                 </div>
-                <div className="flex flex-col gap-4 py-4">
+                <div className="flex flex-col gap-6 p-4 overflow-y-auto">
                   {user ? (
                     <>
-                      <div className="flex items-center gap-3 px-4 py-2 border rounded-lg">
-                        <Avatar className="h-10 w-10">
+                      <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                        <Avatar className="h-12 w-12 border-2 border-primary/10">
                           <AvatarImage
                             src={`https://api.dicebear.com/7.x/identicon/svg?seed=${user.email}`}
                             alt={user.email}
@@ -162,66 +161,57 @@ export default function Header() {
                           <AvatarFallback>{getUserInitials()}</AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">
-                          <span className="text-sm font-medium">{user.email}</span>
-                          
+                          <span className="font-medium truncate max-w-[180px]">{user.email}</span>
+                          <span className="text-xs text-muted-foreground">Logged in</span>
                         </div>
                       </div>
                       <nav className="flex flex-col space-y-1">
                         <Link
                           href="/profile"
-                          className="flex items-center gap-2 px-4 py-2 text-sm rounded-md hover:bg-accent"
+                          className="flex items-center gap-3 px-4 py-3 text-sm rounded-md hover:bg-accent transition-colors"
                           onClick={() => setMobileMenuOpen(false)}
                         >
-                          <User className="h-4 w-4" />
-                          Profile
+                          <User className="h-4 w-4 text-primary" />
+                          <span>Profile</span>
                         </Link>
                         <Link
                           href="/dashboard"
-                          className="flex items-center gap-2 px-4 py-2 text-sm rounded-md hover:bg-accent"
+                          className="flex items-center gap-3 px-4 py-3 text-sm rounded-md hover:bg-accent transition-colors"
                           onClick={() => setMobileMenuOpen(false)}
                         >
-                          <Trophy className="h-4 w-4" />
-                          My Contests
+                          <Trophy className="h-4 w-4 text-primary" />
+                          <span>My Contests</span>
                         </Link>
                         <Link
                           href="/settings"
-                          className="flex items-center gap-2 px-4 py-2 text-sm rounded-md hover:bg-accent"
+                          className="flex items-center gap-3 px-4 py-3 text-sm rounded-md hover:bg-accent transition-colors"
                           onClick={() => setMobileMenuOpen(false)}
                         >
-                          <Settings className="h-4 w-4" />
-                          Settings
+                          <Settings className="h-4 w-4 text-primary" />
+                          <span>Settings</span>
                         </Link>
                         <Link
                           href="/notifications"
-                          className="flex items-center gap-2 px-4 py-2 text-sm rounded-md hover:bg-accent"
+                          className="flex items-center gap-3 px-4 py-3 text-sm rounded-md hover:bg-accent transition-colors"
                           onClick={() => setMobileMenuOpen(false)}
                         >
-                          <Bell className="h-4 w-4" />
-                          Notifications
+                          <Bell className="h-4 w-4 text-primary" />
+                          <span>Notifications</span>
                         </Link>
                       </nav>
-                      <div className="mt-auto pt-4">
-                        <Button
-                          variant="destructive"
-                          className="w-full"
-                          onClick={() => {
-                            handleLogout()
-                            setMobileMenuOpen(false)
-                          }}
-                        >
-                          <LogOut className="mr-2 h-4 w-4" />
-                          Log out
-                        </Button>
-                      </div>
                     </>
                   ) : (
-                    <div className="flex flex-col gap-2 px-4">
-                      <Button asChild className="w-full">
+                    <div className="flex flex-col gap-3 py-4">
+                      <h3 className="text-lg font-medium mb-2">Welcome to CodeTracker</h3>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Sign in to track your coding contests and progress.
+                      </p>
+                      <Button asChild size="lg" className="w-full">
                         <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
                           Login
                         </Link>
                       </Button>
-                      <Button asChild variant="outline" className="w-full">
+                      <Button asChild variant="outline" size="lg" className="w-full">
                         <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
                           Sign Up
                         </Link>
@@ -229,6 +219,22 @@ export default function Header() {
                     </div>
                   )}
                 </div>
+                {user && (
+                  <div className="mt-auto p-4 border-t">
+                    <Button
+                      variant="destructive"
+                      size="lg"
+                      className="w-full"
+                      onClick={() => {
+                        handleLogout()
+                        setMobileMenuOpen(false)
+                      }}
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Log out
+                    </Button>
+                  </div>
+                )}
               </div>
             </SheetContent>
           </Sheet>
