@@ -144,7 +144,7 @@ export default function Header() {
                   </div>
                   <SheetTrigger asChild>
                     <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                      <X className="h-5 w-5" />
+                      
                       <span className="sr-only">Close menu</span>
                     </Button>
                   </SheetTrigger>
